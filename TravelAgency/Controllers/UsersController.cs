@@ -1,10 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Azure.Core;
+using Azure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 using TravelAgency.Models;
 
 namespace TravelAgency.Controllers
@@ -18,38 +24,64 @@ namespace TravelAgency.Controllers
         public UsersController(TRAVEL_AGENCYContext context)
         {
             _context = context;
-        } 
+        }
 
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+
+        [HttpPost("Login")]
+        public async Task<ActionResult<User>> Login(UserPass user)
         {
-            _context.Users.Add(user);
+
+
+            User currentUser = await _context.Users.FindAsync(user.username);
+            if (currentUser == null) { return NotFound("Username does not exist!"); }
+            if (!PasswordHasher.VerifyPassword(user.password, currentUser.Password)) { return NotFound("Wrong Password!"); }
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes("MyUltraSecureJWTSigningKey_1234567890"); // Use secure storage in real apps
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, currentUser.Username),
+                new Claim(ClaimTypes.Role, currentUser.Role)
+            };
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                
+                SigningCredentials = new SigningCredentials(
+                   new SymmetricSecurityKey(key),
+                   SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+            return Ok(new
+            {
+                user = currentUser.Username,
+                role = currentUser.Role,
+                token = tokenString
+            });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<User>> CreateAnAccount(UserPass user)
+        {
             try
             {
-                await _context.SaveChangesAsync();
+                User currentUser = await _context.Users.FindAsync(user.username);
+                if (currentUser != null) { return Conflict("Username already exist!"); }
+                string hash = PasswordHasher.HashPassword(user.password);
+                User newUser = new User { Username = user.username, Password = hash, Role = "User" };
+                _context.Users.Add(newUser);
+                _context.SaveChanges();
+                return Ok(new { username = newUser.Username, role = "User" });
             }
-            catch (DbUpdateException)
+            catch (Exception ex)
             {
-                if (UserExists(user.Username))
-                {
-                    return Conflict("Username Already Exists!");
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return BadRequest(ex.Message);
             }
 
-            return CreatedAtAction("GetUser", new { id = user.Username }, user);
         }
 
-        
-
-        private bool UserExists(string id)
-        {
-            return _context.Users.Any(e => e.Username == id);
-        }
     }
 }
