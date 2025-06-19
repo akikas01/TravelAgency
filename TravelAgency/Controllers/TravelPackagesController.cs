@@ -96,7 +96,7 @@ namespace TravelAgency.Controllers
                 }
             }
 
-            return CreatedAtAction("GetTravelPackage", new { id = travelPackage.Title }, travelPackage);
+            return Ok("New Travel Package created successfully!");
         }
 
         // DELETE: api/TravelPackages/5
