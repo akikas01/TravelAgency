@@ -22,18 +22,36 @@ namespace TravelAgency.Controllers
             _context = context;
         }
 
-        // GET: api/TravelPackages
+        [HttpGet("titles")]
+        public async Task<ActionResult<IEnumerable<String>>> GetTravelPackagesTitles()
+        {
+            List<TravelPackage> TravelPackages= await _context.TravelPackages.ToListAsync();
+
+            List<String> Titles = new List<String>();
+
+            foreach(TravelPackage i in TravelPackages)
+            {
+
+                Titles.Add(i.Title);
+
+            }
+
+            return Titles;
+        }
+
+
+        // GET: api/TravelPackage
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TravelPackage>>> GetTravelPackages()
         {
             return await _context.TravelPackages.ToListAsync();
         }
 
-        // GET: api/TravelPackages/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TravelPackage>> GetTravelPackage(string id)
+        
+        [HttpGet("{title}")]
+        public async Task<ActionResult<TravelPackage>> GetTravelPackage(string title)
         {
-            var travelPackage = await _context.TravelPackages.FindAsync(id);
+            var travelPackage = await _context.TravelPackages.FindAsync(title);
 
             if (travelPackage == null)
             {
