@@ -25,11 +25,11 @@ namespace TravelAgency.Controllers
         [HttpGet("titles")]
         public async Task<ActionResult<IEnumerable<String>>> GetTravelPackagesTitles()
         {
-            List<TravelPackage> TravelPackages= await _context.TravelPackages.ToListAsync();
+            List<TravelPackage> TravelPackages = await _context.TravelPackages.ToListAsync();
 
             List<String> Titles = new List<String>();
 
-            foreach(TravelPackage i in TravelPackages)
+            foreach (TravelPackage i in TravelPackages)
             {
 
                 Titles.Add(i.Title);
@@ -47,7 +47,7 @@ namespace TravelAgency.Controllers
             return await _context.TravelPackages.ToListAsync();
         }
 
-        
+
         [HttpGet("{title}")]
         public async Task<ActionResult<TravelPackage>> GetTravelPackage(string title)
         {
@@ -125,12 +125,12 @@ namespace TravelAgency.Controllers
         {
             var travelPackage = await _context.TravelPackages.FindAsync(title);
             List<Destination> destination = _context.Destinations.Where(p => p.TravelPackage == title).ToList();
-
+            List<Booking> bookings = _context.Bookings.Where(p => p.TravelPackage == title).ToList();
             if (travelPackage == null)
             {
                 return NotFound("Travel Package Not Found");
             }
-            
+
 
             _context.TravelPackages.Remove(travelPackage);
 
@@ -139,6 +139,13 @@ namespace TravelAgency.Controllers
             {
                 await _context.Database.ExecuteSqlRawAsync(
                 "DELETE FROM Destinations WHERE TRAVEL_PACKAGE = {0}", title);
+
+            }
+
+            if (bookings.Count != 0)
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+               "DELETE FROM BOOKING WHERE TRAVEL_PACKAGE = {0}", title);
 
             }
             await _context.SaveChangesAsync();
