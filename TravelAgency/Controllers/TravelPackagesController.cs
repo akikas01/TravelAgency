@@ -42,12 +42,13 @@ namespace TravelAgency.Controllers
             return travelPackage;
         }
 
-        // PUT: api/TravelPackages/5
+        // PUT: api/TravelPackage/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTravelPackage(string id, TravelPackage travelPackage)
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{title}")]
+        public async Task<IActionResult> PutTravelPackage(string title, TravelPackage travelPackage)
         {
-            if (id != travelPackage.Title)
+            if (title != travelPackage.Title)
             {
                 return BadRequest();
             }
@@ -60,7 +61,7 @@ namespace TravelAgency.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TravelPackageExists(id))
+                if (!TravelPackageExists(title))
                 {
                     return NotFound();
                 }
@@ -70,7 +71,7 @@ namespace TravelAgency.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok("Travel Package Updated Successfully");
         }
 
         // POST: api/TravelPackages
