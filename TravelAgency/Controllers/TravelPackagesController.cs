@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,20 +101,31 @@ namespace TravelAgency.Controllers
             return Ok("New Travel Package created successfully!");
         }
 
-        // DELETE: api/TravelPackages/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTravelPackage(string id)
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{title}")]
+        public async Task<IActionResult> DeleteTravelPackage(string title)
         {
-            var travelPackage = await _context.TravelPackages.FindAsync(id);
+            var travelPackage = await _context.TravelPackages.FindAsync(title);
+            List<Destination> destination = _context.Destinations.Where(p => p.TravelPackage == title).ToList();
+
             if (travelPackage == null)
             {
-                return NotFound();
+                return NotFound("Travel Package Not Found");
             }
+            
 
             _context.TravelPackages.Remove(travelPackage);
+
+
+            if (destination.Count != 0)
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                "DELETE FROM Destinations WHERE TRAVEL_PACKAGE = {0}", title);
+
+            }
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Travel Package removed successfully!");
         }
 
         private bool TravelPackageExists(string id)
