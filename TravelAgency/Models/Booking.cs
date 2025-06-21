@@ -9,7 +9,7 @@ public partial class Booking
 
     public string User { get; set; } = null!;
 
-    public virtual TravelPackage TravelPackageNavigation { get; set; } = null!;
+    public virtual TravelPackage? TravelPackageNavigation { get; set; } = null!;
 
-    public virtual User UserNavigation { get; set; } = null!;
+    public virtual User? UserNavigation { get; set; } = null!;
 }
