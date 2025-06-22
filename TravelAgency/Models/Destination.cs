@@ -9,7 +9,7 @@ public partial class Destination
 
     public string TravelPackage { get; set; } = null!;
 
-    public virtual Country CountryNavigation { get; set; } = null!;
+    public virtual Country? CountryNavigation { get; set; } = null!;
 
-    public virtual TravelPackage TravelPackageNavigation { get; set; } = null!;
+    public virtual TravelPackage? TravelPackageNavigation { get; set; } = null!;
 }

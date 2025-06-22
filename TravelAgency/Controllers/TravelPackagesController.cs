@@ -108,7 +108,7 @@ namespace TravelAgency.Controllers
             {
                 if (TravelPackageExists(travelPackage.Title))
                 {
-                    return Conflict();
+                    return Conflict("Travel Package already exists");
                 }
                 else
                 {
