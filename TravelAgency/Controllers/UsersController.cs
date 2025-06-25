@@ -33,7 +33,7 @@ namespace TravelAgency.Controllers
 
 
             User currentUser = await _context.Users.FindAsync(user.username);
-            if (currentUser == null) { return NotFound("Username does not exists!"); }
+            if (currentUser == null) { return NotFound("Username does not exist!"); }
             if (!PasswordHasher.VerifyPassword(user.password, currentUser.Password)) { return NotFound("Wrong Password!"); }
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes("MyUltraSecureJWTSigningKey_1234567890"); // Use secure storage in real apps
