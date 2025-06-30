@@ -5,6 +5,17 @@ using System.Text;
 using TravelAgency.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 var secretKey = "MyUltraSecureJWTSigningKey_1234567890";
 var issuer = "yourdomain.com";
 var audience = "yourdomain.com";
@@ -15,6 +26,7 @@ var audience = "yourdomain.com";
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,6 +71,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication(); // Must come before UseAuthorization
 app.UseAuthorization();
+
+app.UseCors("AllowReactApp");
 
 app.MapControllers();
 
