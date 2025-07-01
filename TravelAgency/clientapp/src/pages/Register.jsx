@@ -13,8 +13,8 @@ export default function Register() {
             const user = await register(username, password);
             if (user.role === 'Admin') navigate('/admin');
             else navigate('/user');
-        } catch {
-            alert('Registration failed');
+        } catch(ex) {
+            alert(ex.message);
         }
     };
 

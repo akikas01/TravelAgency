@@ -32,13 +32,28 @@ export const AuthProvider = ({ children }) => {
     };
 
     const register = async (username, password) => {
-        const res = await fetch('https://localhost:5001/api/account/register', {
+        const res = await fetch('https://localhost:7175/api/Users/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
 
-        if (!res.ok) throw new Error('Registration failed');
+        if (res.status == 409) {
+            const message = await res.text();
+            throw new Error(message); 
+            return;
+
+        }
+
+        if (res.ok) {
+
+            alert("User registered succesfully")
+            
+        }
+        else{
+            const errorMessage = await res.text();
+            throw new Error(errorMessage);
+        }
 
         const data = await res.json();
         const userInfo = { username: data.user, role: data.role };
