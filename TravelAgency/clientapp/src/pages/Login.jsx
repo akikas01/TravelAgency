@@ -19,13 +19,14 @@ export default function Login() {
     };
 
     return (
-        <div>
+        <div style={{ 'textAlign': 'center' }}>
             <h1 style={{ 'textAlign': 'center' }}>Travelling to Europe!!! </h1>
-            <h2>Login</h2>
-            <input onChange={e => setUsername(e.target.value)} placeholder="Username" />
-            <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
-            <button onClick={handleLogin}>Login</button>
-            <p>Don't have an account? <Link to="/register">Register</Link></p>
+            <img src="https://www.parkonking.com.au/wp-content/uploads/2023/08/travelling-around-Europe-from-Australia.jpg" alt="TravellingInEurope" />
+            <h2 style={{ 'textAlign': 'center' }}>Login</h2>
+            <input style={{ 'textAlign': 'center' }} onChange={e => setUsername(e.target.value)} placeholder="Username" />
+            <input style={{ 'textAlign': 'center' }} type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
+            <button style={{ 'textAlign': 'center' }} onClick={handleLogin}>Login</button>
+            <p style={{ 'textAlign': 'center' }}>Don't have an account? <Link style={{ 'textAlign': 'center' }} to="/register">Register</Link></p>
         </div>
     );
 }
