@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+﻿import { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
@@ -20,6 +20,7 @@ export default function Login() {
 
     return (
         <div>
+            <h1 style={{ 'textAlign': 'center' }}>Travelling to Europe!!! </h1>
             <h2>Login</h2>
             <input onChange={e => setUsername(e.target.value)} placeholder="Username" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
