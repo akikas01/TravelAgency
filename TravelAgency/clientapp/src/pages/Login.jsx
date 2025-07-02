@@ -7,14 +7,18 @@ export default function Login() {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false)
 
     const handleLogin = async () => {
         try {
+            setLoading(true);
             const user = await login(username, password);
+            setLoading(false);
             if (user.role === 'Admin') navigate('/admin');
             else navigate('/user');
-        } catch(ex) {
+        } catch (ex) {
             alert(ex.message);
+            setLoading(false)
         }
     };
 
@@ -25,7 +29,17 @@ export default function Login() {
             <h2 style={{ 'textAlign': 'center' }}>Login</h2>
             <input style={{ 'textAlign': 'center' }} onChange={e => setUsername(e.target.value)} placeholder="Username" />
             <input style={{ 'textAlign': 'center' }} type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
-            <button style={{ 'textAlign': 'center' }} onClick={handleLogin}>Login</button>
+            <button style={{ 'textAlign': 'center' }} onClick={handleLogin}>
+                {
+                    loading ? (
+                        <img
+                            src="https://i.gifer.com/ZZ5H.gif"
+                            alt="loading"
+                            style={{ width: '20px', height: '20px' }}
+                        />
+                    ) : (
+                        'Login'
+                    )}</button>
             <p style={{ 'textAlign': 'center' }}>Don't have an account? <Link style={{ 'textAlign': 'center' }} to="/register">Register</Link></p>
         </div>
     );
