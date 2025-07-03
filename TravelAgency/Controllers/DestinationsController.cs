@@ -48,7 +48,7 @@ namespace TravelAgency.Controllers
             if (destinations.Count == 0)
             {
 
-                return NotFound("No Travel Packages includes this country!");
+                return NotFound("No Travel Packages include this country!");
 
             }
             List<String> travelPackages = new List<String>();

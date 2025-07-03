@@ -42,12 +42,13 @@ export default function AdminPage() {
 
             if (!res.ok) {
                 alert(await res.text());
+                setTravelPackages([]);
             }
 
-            const data = await res.text();
-            const array = data.split(',');
+            const data = await res.json();
             
-            setTravelPackages(array);
+            
+            setTravelPackages(data);
             
         } catch (error) {
             console.error("Error fetching Travel Packages:", error);
