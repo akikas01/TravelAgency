@@ -64,7 +64,7 @@ namespace TravelAgency.Controllers
 
             if (bookings.Count == 0)
             {
-                return NotFound("No one has booked this Travel Package");
+                return NotFound("No Travel Package was booked by this user");
             }
             List<String> travelPackages = new List<String>();
             foreach (var booking in bookings)

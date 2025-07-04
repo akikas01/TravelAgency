@@ -15,6 +15,7 @@ export default function AdminPage() {
     const [selectedOption, setSelectedOption] = useState("");
     const [countries, setCountries] = useState([]);
     const [travelPackages, setTravelPackages] = useState([]);
+    const [bookings, setBookings] = useState([]);
     const selectCountries = async () => {
         try {
             const res = await fetch('https://localhost:7175/api/Countries', {
@@ -46,22 +47,52 @@ export default function AdminPage() {
             }
 
             const data = await res.json();
-            
-            
+
+
             setTravelPackages(data);
-            
+
         } catch (error) {
             console.error("Error fetching Travel Packages:", error);
         }
     };
 
-    
+
 
     useEffect(() => {
         if (selectedOption) {
             travelPackagesCall();
         }
     }, [selectedOption]);
+
+
+    const viewBookings = async () => {
+
+        try {
+            const res = await fetch(`https://localhost:7175/api/Booking/TravelPackages/${user.username}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`                }
+            });
+
+            if (!res.ok) {
+                alert(await res.text());
+                setBookings([]);
+
+            }
+
+            const data = await res.json();
+            setBookings(data);
+            
+            
+
+
+        } catch (error) {
+            console.error("Error fetching Bookings:", error);
+        }
+    }
+
+    useEffect(() => { if (section === "bookings") viewBookings(); return; },[section]);
 
 
 
@@ -98,7 +129,7 @@ export default function AdminPage() {
                         >
                             <option value="">-- Select --</option>
                             {
-                                
+
                                 countries.map((country) => (<option value={country}>{country}</option>))
 
 
@@ -107,17 +138,17 @@ export default function AdminPage() {
 
 
                         </select>
-                      
+
                         {
 
                             selectedOption && (<div>
-                            
-                                { travelPackages.map((tp) => { return(<p style={{ marginTop: "20px" }}><strong>{tp}</strong> </p>) })}</div>
-                                
-                           
-                        )}
+
+                                {travelPackages.map((tp) => { return (<p style={{ marginTop: "20px" }}><strong>{tp}</strong> </p>) })}</div>
+
+
+                            )}
                     </div></div>)}
-                {section === "bookings" && <h2>Viewing Bookings</h2>}
+                {section === "bookings" && (<div><h2>Bookings</h2><ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>{bookings.map((booking) => { return (<li>{booking}</li>) })}</ul></div>)}
             </div>
         </div></div>;
 
