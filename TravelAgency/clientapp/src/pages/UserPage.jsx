@@ -16,6 +16,9 @@ export default function AdminPage() {
     const [countries, setCountries] = useState([]);
     const [travelPackages, setTravelPackages] = useState([]);
     const [bookings, setBookings] = useState([]);
+    const [selectedTravelPackage, setSelectedTravelPackage] = useState("");
+    const [travelPackagesView, setTravelPackagesView] = useState([]);
+    const [currentTravelPackage, setCurrentTravelPackage] = useState(null);
     const selectCountries = async () => {
         try {
             const res = await fetch('https://localhost:7175/api/Countries', {
@@ -93,9 +96,63 @@ export default function AdminPage() {
     }
 
     useEffect(() => { if (section === "bookings") viewBookings(); return; },[section]);
+    useEffect(() => {
+        if (section === "travelPackages") {
+            getTravelPackages();
+        }
+    }, [section]);
+    const getTravelPackages = async () => {
+
+        try {
+            const res = await fetch("https://localhost:7175/api/TravelPackage/titles", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const data = await res.json();
+            setTravelPackagesView(data);
 
 
 
+
+        } catch (error) {
+            console.error("Error fetching Travel Packages View:", error);
+        }
+    }
+    
+    const getTravelPackage = async () => {
+        try {
+            const res = await fetch(`https://localhost:7175/api/TravelPackage/${selectedTravelPackage}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                    
+                }
+            });
+
+            
+
+            const data = await res.json();
+            setCurrentTravelPackage(data);
+
+
+
+
+        } catch (error) {
+            console.error("Error fetching Current Travel Package:", error);
+        }
+
+
+
+    }
+
+useEffect(() => {
+        if (selectedTravelPackage !== "") {
+            getTravelPackage();
+        }
+    }, [selectedTravelPackage]);
 
     if (!user) {
         return <Navigate to="/" />;
@@ -113,7 +170,27 @@ export default function AdminPage() {
 
             <div style={{ marginTop: "40px" }}>
                 {section === "home" && <p>Please choose an option above.</p>}
-                {section === "travelPackages" && <h2>View and Book Travel Packages</h2>}
+                {section === "travelPackages" && (<div><h2>Travel Packages</h2>
+                    <select
+                        value={selectedTravelPackage}
+                        onChange={(e) => setSelectedTravelPackage(e.target.value)}
+                        style={{
+                            padding: "10px",
+                            fontSize: "16px",
+                            position: "relative",
+                            zIndex: 1
+                        }}
+                    ><option value="">-- Select --</option>
+                            {
+
+                            travelPackagesView.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
+
+
+
+                            }
+
+
+                    </select>{selectedTravelPackage !== "" && currentTravelPackage && <form><label style={{ fontWeight: 'bold' }}> Price in euros:</label><div>{currentTravelPackage.price}</div> <label style={{ fontWeight: 'bold' }}> Description:</label><div>{currentTravelPackage.description}</div></form>}</div>)}
                 {section === "countries" && (<div><h2>View Countries and associated Travel Packages</h2>
                     <div style={{ textAlign: "center", marginTop: "50px", overflow: "visible" }}>
                         <h2>Select an Option:</h2>

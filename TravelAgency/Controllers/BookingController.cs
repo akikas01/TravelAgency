@@ -25,7 +25,7 @@ namespace TravelAgency.Controllers
 
             if (_context.Bookings.Any(e => e.User == booking.User && e.TravelPackage == booking.TravelPackage))
             {
-                return Conflict();
+                return Conflict("You have already booked this Travel Package");
             }
             var sql = "INSERT INTO Booking VALUES ({0}, {1})";
 
