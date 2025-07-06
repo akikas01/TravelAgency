@@ -75,7 +75,8 @@ export default function AdminPage() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem("token")}`                }
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                }
             });
 
             if (!res.ok) {
@@ -86,8 +87,8 @@ export default function AdminPage() {
 
             const data = await res.json();
             setBookings(data);
-            
-            
+
+
 
 
         } catch (error) {
@@ -95,7 +96,7 @@ export default function AdminPage() {
         }
     }
 
-    useEffect(() => { if (section === "bookings") viewBookings(); return; },[section]);
+    useEffect(() => { if (section === "bookings") viewBookings(); return; }, [section]);
     useEffect(() => {
         if (section === "travelPackages") {
             getTravelPackages();
@@ -121,18 +122,18 @@ export default function AdminPage() {
             console.error("Error fetching Travel Packages View:", error);
         }
     }
-    
+
     const getTravelPackage = async () => {
         try {
             const res = await fetch(`https://localhost:7175/api/TravelPackage/${selectedTravelPackage}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                    
+
                 }
             });
 
-            
+
 
             const data = await res.json();
             setCurrentTravelPackage(data);
@@ -148,7 +149,7 @@ export default function AdminPage() {
 
     }
 
-useEffect(() => {
+    useEffect(() => {
         if (selectedTravelPackage !== "") {
             getTravelPackage();
         }
@@ -157,13 +158,37 @@ useEffect(() => {
     if (!user) {
         return <Navigate to="/" />;
     }
+    
+    const book = async (currentbooking) => {
+        try {
+            const res = await fetch("https://localhost:7175/api/Booking", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify(currentbooking)
+            });
+
+
+            alert(await res.text());
+
+
+
+
+
+
+        } catch (error) {
+            console.error("Error fetching Booking:", error);
+        }
+    }
 
     return <div><h1>Welcome, User {user.username}</h1>
         <button onClick={handlelogout}>Logout</button>
         <div style={{ textAlign: "center", padding: "20px" }}>
             <h1>Options</h1>
             <div style={{ marginTop: "20px" }}>
-                <button onClick={() => setSection("travelPackages")} style={section === "travelPackages" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white'}}>View and Book Travel Packages</button>
+                <button onClick={() => setSection("travelPackages")} style={section === "travelPackages" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View and Book Travel Packages</button>
                 <button onClick={() => setSection("countries")} style={section === "countries" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View Countries and associated Travel Packages</button>
                 <button onClick={() => setSection("bookings")} style={section === "bookings" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>Viewing Bookings</button>
             </div>
@@ -181,16 +206,24 @@ useEffect(() => {
                             zIndex: 1
                         }}
                     ><option value="">-- Select --</option>
-                            {
+                        {
 
                             travelPackagesView.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
 
 
 
-                            }
+                        }
 
 
-                    </select>{selectedTravelPackage !== "" && currentTravelPackage && <form><label style={{ fontWeight: 'bold' }}> Price in euros:</label><div>{currentTravelPackage.price}</div> <label style={{ fontWeight: 'bold' }}> Description:</label><div>{currentTravelPackage.description}</div></form>}</div>)}
+                    </select>{selectedTravelPackage !== "" && currentTravelPackage && <form><label style={{ fontWeight: 'bold' }}> Price in euros:</label><div>{currentTravelPackage.price}</div> <label style={{ fontWeight: 'bold' }}> Description:</label><div>{currentTravelPackage.description}<div><button onClick={() => book({ user: user.username, travelPackage: currentTravelPackage.title })} style={{
+                        backgroundColor: 'blue',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '20px',
+                        padding: '10px 20px',
+                        cursor: 'pointer'
+                    }}>Book</button></div>
+                    </div></form>}</div>)}
                 {section === "countries" && (<div><h2>View Countries and associated Travel Packages</h2>
                     <div style={{ textAlign: "center", marginTop: "50px", overflow: "visible" }}>
                         <h2>Select an Option:</h2>
