@@ -69,6 +69,117 @@ export default function AdminPage() {
 
     useEffect(() => { if (selectedTravelPackage !== "") { getUsers(selectedTravelPackage); } }, [selectedTravelPackage]);
 
+    const [formData, setFormData] = useState({
+        title: '',
+        price: '',
+        description: '',
+        tags: []
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [countries, setCountries] = useState([]);
+    const selectCountries = async () => {
+        try {
+            const res = await fetch('https://localhost:7175/api/Countries', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            setCountries(data);
+        } catch (error) {
+            console.error("Error fetching countries:", error);
+        }
+    };
+    useEffect(() => {
+        if (section === "createTravelPackages") {
+            selectCountries();
+        }
+    }, [section])
+    const availableTags = countries;
+
+
+    const handleCheckboxChange = (tag) => {
+        setFormData(prev => {
+            const alreadySelected = prev.tags.includes(tag);
+            const newTags = alreadySelected
+                ? prev.tags.filter(t => t !== tag)
+                : [...prev.tags, tag];
+            return { ...prev, tags: newTags };
+        });
+    };
+    const [created, setCreated] = useState(false);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await fetch("https://localhost:7175/api/TravelPackage", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({ title: formData.title, price: formData.price,description: formData.description })
+            });
+
+            if (res.ok) {
+                setCreated(true);
+
+            }
+            alert(await res.text());
+
+
+
+
+
+
+        } catch (error) {
+            console.error("Error fetching Travel Package:", error);
+        }
+
+
+    };
+
+    const handleDestinations = async () => {
+
+        var destinations = [];
+        formData.tags.map((country) => { destinations.push({ TravelPackage: formData.title,Country:country });  });
+
+        try {
+            const res = await fetch("https://localhost:7175/api/Destinations", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify(destinations)
+            });
+
+            setCreated(false);
+
+
+
+
+
+
+        } catch (error) {
+            console.error("Error fetching Destinations:", error);
+        }
+       
+
+    };
+    useEffect(() => {
+            if (created) {
+                handleDestinations();
+
+        } },[created]);
     if (!user || user.role !== 'Admin') return <Navigate to="/" />;
 
     return <div><h1>Welcome, Admin {user.username}</h1>
@@ -83,26 +194,111 @@ export default function AdminPage() {
             </div><div style={{ marginTop: "40px" }}>
                 {section === "home" && <p>Please choose an option above.</p>}
                 {section === "countries" && <p>Please choose an option above.</p>}<div />
-                {section === "createTravelPackages" && <p>Please choose an option above.</p>}<div />
-                {section === "bookings" && (<div><select
-                    value={selectedTravelPackage}
-                    onChange={(e) => setSelectedTravelPackage(e.target.value)}
-                    style={{
-                        padding: "10px",
-                        fontSize: "16px",
-                        position: "relative",
-                        zIndex: 1
-                    }}
-                ><option value="">-- Select Travel Package --</option>
-                    {
+                {section === "createTravelPackages" && (<div><h2>Create a Travel Package</h2><form onSubmit={handleSubmit}>
+                    <div>
+                        <label>Title:</label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-                        travelPackages.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
+                    <div>
+                        <label>Price:</label>
+                        <input
+                            type="number"
+                            name="price"
+                            value={formData.price}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label>Description:</label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div style={{
+                        position: 'relative',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                        minHeight: '50vh'
+                    }} >
+                        <label>Countries:</label>
+                        <div
+                            onClick={() => setDropdownOpen(prev => !prev)}
+                            style={{
+                                border: '1px solid #ccc',
+                                padding: '8px',
+                                cursor: 'pointer',
+                                width: '200px',
+                                textAlign: 'center',
+                                backgroundColor: '#f9f9f9'
+                            }}
+                        >
+                            {formData.tags.length > 0
+                                ? formData.tags.join(', ')
+                                : 'Select countries'}
+                        </div>
+
+                        {dropdownOpen && (
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: '100%',
+                                    marginTop: '10px',
+                                    backgroundColor: '#fff',
+                                    border: '1px solid #ccc',
+                                    padding: '8px',
+                                    width: '200px',
+                                    zIndex: 1
+                                }}
+                            >
+                                {availableTags.map(tag => (
+                                    <div key={tag}>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.tags.includes(tag)}
+                                                onChange={() => handleCheckboxChange(tag)}
+                                            />
+                                            {tag}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <button type="submit">Submit</button>
+                </form></div>)}<div />
+        {section === "bookings" && (<div><select
+            value={selectedTravelPackage}
+            onChange={(e) => setSelectedTravelPackage(e.target.value)}
+            style={{
+                padding: "10px",
+                fontSize: "16px",
+                position: "relative",
+                zIndex: 1
+            }}
+        ><option value="">-- Select Travel Package --</option>
+            {
+
+                travelPackages.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
 
 
 
-                    }
+            }
 
 
-                </select><div><h2>Users who booked the specific package</h2><ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>{users.map((user) => { return (<li>{user}</li>) })}</ul></div></div>)}
-            </div></div></div>;
+        </select><div><h2>Users who booked the specific package</h2><ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>{users.map((user) => { return (<li>{user}</li>) })}</ul></div></div>)}
+    </div></div ></div >;
 }
