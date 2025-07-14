@@ -37,7 +37,7 @@ export default function AdminPage() {
         }
     }
 
-    useEffect(() => { if (section === "bookings") { getTravelPackages(); } }, [section])
+    useEffect(() => { if (section === "bookings" || section === "travelPackages") { getTravelPackages(); } }, [section])
 
     const getUsers = async (selectedTravelPackage) => {
 
@@ -67,7 +67,7 @@ export default function AdminPage() {
         }
     }
 
-    useEffect(() => { if (selectedTravelPackage !== "") { getUsers(selectedTravelPackage); } }, [selectedTravelPackage]);
+    useEffect(() => { if (selectedTravelPackage !== "" && section === "bookings") { getUsers(selectedTravelPackage); } }, [section, selectedTravelPackage]);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -99,7 +99,7 @@ export default function AdminPage() {
         }
     };
     useEffect(() => {
-        if (section === "createTravelPackages") {
+        if (section === "createTravelPackages" || section === "travelPackages") {
             selectCountries();
         }
     }, [section])
@@ -126,7 +126,7 @@ export default function AdminPage() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
                 },
-                body: JSON.stringify({ title: formData.title, price: formData.price,description: formData.description })
+                body: JSON.stringify({ title: formData.title, price: formData.price, description: formData.description })
             });
 
             if (res.ok) {
@@ -150,7 +150,7 @@ export default function AdminPage() {
     const handleDestinations = async () => {
 
         var destinations = [];
-        formData.tags.map((country) => { destinations.push({ TravelPackage: formData.title,Country:country });  });
+        formData.tags.map((country) => { destinations.push({ TravelPackage: formData.title, Country: country }); });
 
         try {
             const res = await fetch("https://localhost:7175/api/Destinations", {
@@ -172,14 +172,79 @@ export default function AdminPage() {
         } catch (error) {
             console.error("Error fetching Destinations:", error);
         }
-       
+
 
     };
     useEffect(() => {
-            if (created) {
-                handleDestinations();
+        if (created) {
+            handleDestinations();
 
-        } },[created]);
+        }
+    }, [created]);
+
+   
+    useEffect(() => {
+        const fetchPackageAndCountries = async () => {
+            if (section === "travelPackages" && selectedTravelPackage !== "") {
+                try {
+                    const res = await fetch(`https://localhost:7175/api/TravelPackage/${selectedTravelPackage}`);
+                    const data = await res.json();
+
+                    
+                    const countriesRes = await fetch(`https://localhost:7175/api/Destinations/TravelPackage/${selectedTravelPackage}`);
+                    const countriesData = await countriesRes.json();
+
+                    setFormData({
+                        title: data.title,
+                        price: data.price,
+                        description: data.description,
+                        tags: Array.isArray(countriesData) ? countriesData : [countriesData],
+                    });
+                } catch (err) {
+                    console.error("Error in chained fetch:", err);
+                }
+            }
+        };
+
+        fetchPackageAndCountries();
+    }, [selectedTravelPackage, section]);
+
+    useEffect(() => {
+        if (section === "createTravelPackages") {
+            setSelectedTravelPackage("");
+        }
+    }, [section]);
+
+    const handleSubmitEdit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await fetch(`https://localhost:7175/api/TravelPackage/${selectedTravelPackage}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({ title: formData.title, price: formData.price, description: formData.description })
+            });
+
+            
+            alert(await res.text());
+            handleDestinations();
+
+
+
+
+
+        } catch (error) {
+            console.error("Error updating Travel Package:", error);
+        }
+
+
+    };
+
+
+
     if (!user || user.role !== 'Admin') return <Navigate to="/" />;
 
     return <div><h1>Welcome, Admin {user.username}</h1>
@@ -193,7 +258,103 @@ export default function AdminPage() {
                 <button onClick={() => setSection("bookings")} style={section === "bookings" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View users who booked a specific package</button>
             </div><div style={{ marginTop: "40px" }}>
                 {section === "home" && <p>Please choose an option above.</p>}
-                {section === "countries" && <p>Please choose an option above.</p>}<div />
+                {section === "countries" && <p>Please choose an option above.</p>}
+                {section === "travelPackages" && (<div><select
+                    value={selectedTravelPackage}
+                    onChange={(e) => setSelectedTravelPackage(e.target.value)}
+                    style={{
+                        padding: "10px",
+                        fontSize: "16px",
+                        position: "relative",
+                        zIndex: 1
+                    }}
+                ><option value="">-- Select Travel Package --</option>
+                    {
+
+                        travelPackages.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
+
+
+
+                    }
+
+
+                </select>{selectedTravelPackage && < form onSubmit={handleSubmitEdit}>
+                   
+
+                    <div>
+                        <label>Price:</label>
+                        <input
+                            type="number"
+                            name="price"
+                            value={formData.price}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label>Description:</label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div style={{
+                        position: 'relative',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                        minHeight: '50vh'
+                    }} >
+                        <label>Countries:</label>
+                        <div
+                            onClick={() => setDropdownOpen(prev => !prev)}
+                            style={{
+                                border: '1px solid #ccc',
+                                padding: '8px',
+                                cursor: 'pointer',
+                                width: '200px',
+                                textAlign: 'center',
+                                backgroundColor: '#f9f9f9'
+                            }}
+                        >
+                            {formData.tags.length > 0
+                                ? formData.tags.join(', ')
+                                : 'Select countries'}
+                        </div>
+
+                        {dropdownOpen && (
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: '100%',
+                                    marginTop: '10px',
+                                    backgroundColor: '#fff',
+                                    border: '1px solid #ccc',
+                                    padding: '8px',
+                                    width: '200px',
+                                    zIndex: 1
+                                }}
+                            >
+                                {availableTags.map(tag => (
+                                    <div key={tag}>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.tags.includes(tag)}
+                                                onChange={() => handleCheckboxChange(tag)}
+                                            />
+                                            {tag}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>}</div>)}
                 {section === "createTravelPackages" && (<div><h2>Create a Travel Package</h2><form onSubmit={handleSubmit}>
                     <div>
                         <label>Title:</label>
@@ -280,25 +441,25 @@ export default function AdminPage() {
                     </div>
                     <button type="submit">Submit</button>
                 </form></div>)}<div />
-        {section === "bookings" && (<div><select
-            value={selectedTravelPackage}
-            onChange={(e) => setSelectedTravelPackage(e.target.value)}
-            style={{
-                padding: "10px",
-                fontSize: "16px",
-                position: "relative",
-                zIndex: 1
-            }}
-        ><option value="">-- Select Travel Package --</option>
-            {
+                {section === "bookings" && (<div><select
+                    value={selectedTravelPackage}
+                    onChange={(e) => setSelectedTravelPackage(e.target.value)}
+                    style={{
+                        padding: "10px",
+                        fontSize: "16px",
+                        position: "relative",
+                        zIndex: 1
+                    }}
+                ><option value="">-- Select Travel Package --</option>
+                    {
 
-                travelPackages.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
-
-
-
-            }
+                        travelPackages.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
 
 
-        </select><div><h2>Users who booked the specific package</h2><ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>{users.map((user) => { return (<li>{user}</li>) })}</ul></div></div>)}
-    </div></div ></div >;
+
+                    }
+
+
+                </select><div><h2>Users who booked the specific package</h2><ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>{users.map((user) => { return (<li>{user}</li>) })}</ul></div></div>)}
+            </div></div ></div >;
 }
