@@ -185,6 +185,7 @@ export default function AdminPage() {
 
     return <div><h1>Welcome, User {user.username}</h1>
         <button onClick={handlelogout}>Logout</button>
+        <div style={{ textAlign: "center" }} ><img alt="europtravel" class="hCL kVc L4E MIw" fetchpriority="auto" loading="auto" src="https://i.pinimg.com/280x280_RS/74/97/ca/7497ca691ddcac4c0483dade26e85f74.jpg"/></div>
         <div style={{ textAlign: "center", padding: "20px" }}>
             <h1>Options</h1>
             <div style={{ marginTop: "20px" }}>
