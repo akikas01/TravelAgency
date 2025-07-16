@@ -182,7 +182,7 @@ export default function AdminPage() {
         }
     }, [created]);
 
-   
+
     useEffect(() => {
         const fetchPackageAndCountries = async () => {
             if (section === "travelPackages" && selectedTravelPackage !== "") {
@@ -190,7 +190,7 @@ export default function AdminPage() {
                     const res = await fetch(`https://localhost:7175/api/TravelPackage/${selectedTravelPackage}`);
                     const data = await res.json();
 
-                    
+
                     const countriesRes = await fetch(`https://localhost:7175/api/Destinations/TravelPackage/${selectedTravelPackage}`);
                     const countriesData = await countriesRes.json();
 
@@ -228,7 +228,7 @@ export default function AdminPage() {
                 body: JSON.stringify({ title: formData.title, price: formData.price, description: formData.description })
             });
 
-            
+
             alert(await res.text());
             handleDestinations();
 
@@ -243,12 +243,39 @@ export default function AdminPage() {
 
     };
 
+    const deleteTravelPackage = async (travelPackage) => {
 
+
+        try {
+            const res = await fetch(`https://localhost:7175/api/TravelPackage/${travelPackage}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+
+
+            alert(await res.text());
+            setSelectedTravelPackage("");
+            setSection("home");
+
+
+
+
+
+        } catch (error) {
+            console.error("Error deleting Travel Package:", error);
+        }
+
+
+    };
 
     if (!user || user.role !== 'Admin') return <Navigate to="/" />;
 
     return <div><h1>Welcome, Admin {user.username}</h1>
         <button onClick={handlelogout}>Logout</button>
+        <div style={{ textAlign: "center" }} ><img style={{ width: '30%', height:'200px' }} src="https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg" srcset="https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=360 360w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=740 740w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=826 826w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=900 900w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=996 996w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=1060 1060w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=1380 1380w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=1480 1480w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=1800 1800w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=2000 2000w" width="626" height="417" alt="top view travel elements collection" fetchpriority="high" sizes="(max-width: 480px) 100vw, (min-aspect-ratio: 626/417) 100%, (max-width: 1096px) calc(100vw - 40px), calc(100vw - 540px)" class="size-full object-contain" /></div>
         <div style={{ textAlign: "center", padding: "20px" }}>
             <h1>Options</h1>
             <div style={{ marginTop: "20px" }}>
@@ -278,8 +305,8 @@ export default function AdminPage() {
                     }
 
 
-                </select>{selectedTravelPackage && < form onSubmit={handleSubmitEdit}>
-                   
+                </select>{selectedTravelPackage && <div>< form onSubmit={handleSubmitEdit}>
+
 
                     <div>
                         <label>Price:</label>
@@ -353,8 +380,23 @@ export default function AdminPage() {
                             </div>
                         )}
                     </div>
-                    <button type="submit">Submit</button>
-                </form>}</div>)}
+                        <button type="submit" style={{
+                            backgroundColor: 'yellow',
+                            borderRadius: '50%',
+                            width: '60px',
+                            height: '60px',
+                            border: 'none',
+                            cursor: 'pointer',
+                        }}>Submit</button>
+                    </form> <button onClick={() => deleteTravelPackage(selectedTravelPackage)} style={{
+                        backgroundColor: 'red',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        border: 'none',
+                        color: 'white',
+                        cursor: 'pointer',
+                    }}>Delete</button></div>}</div>)}
                 {section === "createTravelPackages" && (<div><h2>Create a Travel Package</h2><form onSubmit={handleSubmit}>
                     <div>
                         <label>Title:</label>
@@ -439,7 +481,14 @@ export default function AdminPage() {
                             </div>
                         )}
                     </div>
-                    <button type="submit">Submit</button>
+                    <button type="submit" style={{
+                        backgroundColor: 'yellow',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        border: 'none',
+                        cursor: 'pointer',
+                    }}>Submit</button>
                 </form></div>)}<div />
                 {section === "bookings" && (<div><select
                     value={selectedTravelPackage}
