@@ -99,7 +99,7 @@ export default function AdminPage() {
         }
     };
     useEffect(() => {
-        if (section === "createTravelPackages" || section === "travelPackages") {
+        if (section === "createTravelPackages" || section === "travelPackages" || section === "countries") {
             selectCountries();
         }
     }, [section])
@@ -270,7 +270,37 @@ export default function AdminPage() {
 
 
     };
+    const [selectedOption, setSelectedOption] = useState("");
+    const travelPackagesCall = async () => {
+        if (!selectedOption) return;
+        try {
+            const res = await fetch(`https://localhost:7175/api/Destinations/Country/${selectedOption}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
 
+            if (!res.ok) {
+                alert(await res.text());
+                setTravelPackages([]);
+            }
+
+            const data = await res.json();
+
+
+            setTravelPackages(data);
+
+        } catch (error) {
+            console.error("Error fetching Travel Packages:", error);
+        }
+    };
+
+
+
+    useEffect(() => {
+        if (selectedOption) {
+            travelPackagesCall();
+        }
+    }, [selectedOption]);
     if (!user || user.role !== 'Admin') return <Navigate to="/" />;
 
     return <div><h1>Welcome, Admin {user.username}</h1>
@@ -285,7 +315,40 @@ export default function AdminPage() {
                 <button onClick={() => setSection("bookings")} style={section === "bookings" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View users who booked a specific package</button>
             </div><div style={{ marginTop: "40px" }}>
                 {section === "home" && <p>Please choose an option above.</p>}
-                {section === "countries" && <p>Please choose an option above.</p>}
+                {section === "countries" && (<div><h2>View Countries and associated Travel Packages</h2>
+                    <div style={{ textAlign: "center", marginTop: "50px", overflow: "visible" }}>
+                        <h2>Select an Option:</h2>
+                        <select
+                            value={selectedOption}
+                            onChange={(e) => setSelectedOption(e.target.value)}
+                            style={{
+                                padding: "10px",
+                                fontSize: "16px",
+                                position: "relative",
+                                zIndex: 1
+                            }}
+                        >
+                            <option value="">-- Select --</option>
+                            {
+
+                                countries.map((country) => (<option value={country}>{country}</option>))
+
+
+
+                            }
+
+
+                        </select>
+
+                        {
+
+                            selectedOption && (<div>
+
+                                {travelPackages.map((tp) => { return (<p style={{ marginTop: "20px" }}><strong>{tp}</strong> </p>) })}</div>
+
+
+                            )}
+                    </div></div>)}
                 {section === "travelPackages" && (<div><select
                     value={selectedTravelPackage}
                     onChange={(e) => setSelectedTravelPackage(e.target.value)}
