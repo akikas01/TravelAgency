@@ -20,10 +20,18 @@ export default function Register() {
 
     return (
         <div>
-            <h2>Register</h2>
+            <h2 style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Register</h2>
             <input onChange={e => setUsername(e.target.value)} placeholder="Username" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
-            <button onClick={handleRegister}>Register</button>
+            <button onClick={handleRegister} style={{
+                'textAlign': 'center', backgroundColor: '#1890FF',
+                color: 'white',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '999px',
+                fontSize: '16px',
+                cursor: 'pointer', marginLeft: '20px',
+            }}>Register</button>
         </div>
     );
 }

@@ -24,9 +24,9 @@ export default function Login() {
 
     return (
         <div style={{ 'textAlign': 'center' }}>
-            <h1 style={{ 'textAlign': 'center' }}>Travelling to Europe!!! </h1>
+            <h1 style={{ 'textAlign': 'center', fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }} >Travelling to Europe!!! </h1>
             <img src="https://www.parkonking.com.au/wp-content/uploads/2023/08/travelling-around-Europe-from-Australia.jpg" alt="TravellingInEurope" />
-            <h2 style={{ 'textAlign': 'center' }}>Login</h2>
+            <h2 style={{ 'textAlign': 'center', fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Login</h2>
             <input style={{ 'textAlign': 'center' }} onChange={e => setUsername(e.target.value)} placeholder="Username" />
             <input style={{ 'textAlign': 'center' }} type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
             <button style={{
@@ -58,7 +58,7 @@ export default function Login() {
                     ) : (
                         'Login'
                     )}</button>
-            <p style={{ 'textAlign': 'center' }}>Don't have an account? <Link style={{ 'textAlign': 'center' }} to="/register">Register</Link></p>
+            <p style={{ 'textAlign': 'center', fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Don't have an account? <Link style={{ 'textAlign': 'center', fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }} to="/register">Register</Link></p>
         </div>
     );
 }
