@@ -183,11 +183,19 @@ export default function AdminPage() {
         }
     }
 
-    return <div><h1>Welcome, User {user.username}</h1>
-        <button onClick={handlelogout}>Logout</button>
-        <div style={{ textAlign: "center" }} ><img alt="europtravel" class="hCL kVc L4E MIw" fetchpriority="auto" loading="auto" src="https://i.pinimg.com/280x280_RS/74/97/ca/7497ca691ddcac4c0483dade26e85f74.jpg"/></div>
+    return <div><h1 style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Welcome, User {user.username}</h1>
+        <button onClick={handlelogout} style={{
+            backgroundColor: '#1890FF',
+            color: 'white',
+            border: 'none',
+            padding: '12px 24px',
+            borderRadius: '999px',
+            fontSize: '16px',
+            cursor: 'pointer',
+        }}>Logout</button>
+        <div style={{ textAlign: "center" }} ><img style={{ width: '30%', height: '200px' }} src="https://images.pexels.com/photos/185933/pexels-photo-185933.jpeg" alt="Travelling"/></div>
         <div style={{ textAlign: "center", padding: "20px" }}>
-            <h1>Options</h1>
+            <h1 style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Options</h1>
             <div style={{ marginTop: "20px" }}>
                 <button onClick={() => setSection("travelPackages")} style={section === "travelPackages" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View and Book Travel Packages</button>
                 <button onClick={() => setSection("countries")} style={section === "countries" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View Countries and associated Travel Packages</button>

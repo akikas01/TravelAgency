@@ -303,11 +303,19 @@ export default function AdminPage() {
     }, [selectedOption]);
     if (!user || user.role !== 'Admin') return <Navigate to="/" />;
 
-    return <div><h1>Welcome, Admin {user.username}</h1>
-        <button onClick={handlelogout}>Logout</button>
+    return <div><h1 style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Welcome, Admin {user.username}</h1>
+        <button onClick={handlelogout} style={{
+            backgroundColor: '#1890FF', 
+            color: 'white',
+            border: 'none',
+            padding: '12px 24px',
+            borderRadius: '999px',
+            fontSize: '16px',
+            cursor: 'pointer',
+        }}>Logout</button>
         <div style={{ textAlign: "center" }} ><img style={{ width: '30%', height:'200px' }} src="https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg" srcset="https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=360 360w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=740 740w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=826 826w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=900 900w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=996 996w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=1060 1060w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=1380 1380w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=1480 1480w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=1800 1800w, https://img.freepik.com/free-photo/top-view-travel-elements-collection_23-2148691133.jpg?t=st=1752650959~exp=1752654559~hmac=a1c344e8aa7f635f0d8cd59ae9f9fb6826c8b3396bc851f613013b874e1c7d5c&amp;w=2000 2000w" width="626" height="417" alt="top view travel elements collection" fetchpriority="high" sizes="(max-width: 480px) 100vw, (min-aspect-ratio: 626/417) 100%, (max-width: 1096px) calc(100vw - 40px), calc(100vw - 540px)" class="size-full object-contain" /></div>
         <div style={{ textAlign: "center", padding: "20px" }}>
-            <h1>Options</h1>
+            <h1 style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Options</h1>
             <div style={{ marginTop: "20px" }}>
                 <button onClick={() => setSection("travelPackages")} style={section === "travelPackages" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View, Edit and Delete Travel Packages with Details</button>
                 <button onClick={() => setSection("countries")} style={section === "countries" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View Countries and associated Travel Packages</button>

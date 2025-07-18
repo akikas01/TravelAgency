@@ -29,13 +29,31 @@ export default function Login() {
             <h2 style={{ 'textAlign': 'center' }}>Login</h2>
             <input style={{ 'textAlign': 'center' }} onChange={e => setUsername(e.target.value)} placeholder="Username" />
             <input style={{ 'textAlign': 'center' }} type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
-            <button style={{ 'textAlign': 'center' }} onClick={handleLogin}>
+            <button style={{
+                'textAlign': 'center', backgroundColor: '#1890FF',
+                color: 'white',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '999px',
+                fontSize: '16px',
+                cursor: 'pointer', marginLeft: '20px',
+            }} onClick={handleLogin}>
                 {
                     loading ? (
                         <img
                             src="https://i.gifer.com/ZZ5H.gif"
                             alt="loading"
-                            style={{ width: '20px', height: '20px' }}
+                            style={{
+                                width: '20px', height: '20px',
+                                backgroundColor: '#1890FF',
+                                color: 'white',
+                                border: 'none',
+                                padding: '12px 24px',
+                                borderRadius: '999px',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                marginLeft: '20px', 
+                            }}
                         />
                     ) : (
                         'Login'
