@@ -6,18 +6,13 @@ import { AuthContext } from '../context/AuthContext';
 export default function AdminPage() {
     const { user, logout } = useContext(AuthContext);
     const [travelPackages, setTravelPackages] = useState([]);
-
-
     const handlelogout = () => {
-
         logout();
-
     }
     const [section, setSection] = useState("home");
     const [selectedTravelPackage, setSelectedTravelPackage] = useState("");
     const [users, setUsers] = useState([]);
     const getTravelPackages = async () => {
-
         try {
             const res = await fetch("https://localhost:7175/api/TravelPackage/titles", {
                 method: 'GET',
@@ -28,19 +23,12 @@ export default function AdminPage() {
 
             const data = await res.json();
             setTravelPackages(data);
-
-
-
-
         } catch (error) {
             console.error("Error fetching Travel Packages View:", error);
         }
     }
-
     useEffect(() => { if (section === "bookings" || section === "travelPackages") { getTravelPackages(); } }, [section])
-
     const getUsers = async (selectedTravelPackage) => {
-
         try {
             const res = await fetch(`https://localhost:7175/api/Booking/Users/${selectedTravelPackage}`, {
                 method: 'GET',
@@ -49,26 +37,18 @@ export default function AdminPage() {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }
             });
-
             if (!res.ok) {
                 alert(await res.text());
                 setUsers([]);
                 return;
             }
-
             const data = await res.json();
             setUsers(data);
-
-
-
-
         } catch (error) {
             console.error("Error fetching Booking:", error);
         }
     }
-
     useEffect(() => { if (selectedTravelPackage !== "" && section === "bookings") { getUsers(selectedTravelPackage); } }, [section, selectedTravelPackage]);
-
     const [formData, setFormData] = useState({
         title: '',
         price: '',
@@ -104,8 +84,6 @@ export default function AdminPage() {
         }
     }, [section])
     const availableTags = countries;
-
-
     const handleCheckboxChange = (tag) => {
         setFormData(prev => {
             const alreadySelected = prev.tags.includes(tag);
@@ -134,17 +112,9 @@ export default function AdminPage() {
 
             }
             alert(await res.text());
-
-
-
-
-
-
         } catch (error) {
             console.error("Error fetching Travel Package:", error);
         }
-
-
     };
 
     const handleDestinations = async () => {
@@ -163,17 +133,9 @@ export default function AdminPage() {
             });
 
             setCreated(false);
-
-
-
-
-
-
         } catch (error) {
             console.error("Error fetching Destinations:", error);
         }
-
-
     };
     useEffect(() => {
         if (created) {
@@ -181,16 +143,12 @@ export default function AdminPage() {
 
         }
     }, [created]);
-
-
     useEffect(() => {
         const fetchPackageAndCountries = async () => {
             if (section === "travelPackages" && selectedTravelPackage !== "") {
                 try {
                     const res = await fetch(`https://localhost:7175/api/TravelPackage/${selectedTravelPackage}`);
                     const data = await res.json();
-
-
                     const countriesRes = await fetch(`https://localhost:7175/api/Destinations/TravelPackage/${selectedTravelPackage}`);
                     const countriesData = await countriesRes.json();
 
@@ -227,25 +185,13 @@ export default function AdminPage() {
                 },
                 body: JSON.stringify({ title: formData.title, price: formData.price, description: formData.description })
             });
-
-
             alert(await res.text());
             handleDestinations();
-
-
-
-
-
         } catch (error) {
             console.error("Error updating Travel Package:", error);
         }
-
-
     };
-
     const deleteTravelPackage = async (travelPackage) => {
-
-
         try {
             const res = await fetch(`https://localhost:7175/api/TravelPackage/${travelPackage}`, {
                 method: 'DELETE',
@@ -254,21 +200,12 @@ export default function AdminPage() {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }
             });
-
-
             alert(await res.text());
             setSelectedTravelPackage("");
             setSection("home");
-
-
-
-
-
         } catch (error) {
             console.error("Error deleting Travel Package:", error);
         }
-
-
     };
     const [selectedOption, setSelectedOption] = useState("");
     const travelPackagesCall = async () => {
@@ -293,9 +230,6 @@ export default function AdminPage() {
             console.error("Error fetching Travel Packages:", error);
         }
     };
-
-
-
     useEffect(() => {
         if (selectedOption) {
             travelPackagesCall();
@@ -338,13 +272,8 @@ export default function AdminPage() {
                         >
                             <option value="">-- Select --</option>
                             {
-
                                 countries.map((country) => (<option value={country}>{country}</option>))
-
-
-
                             }
-
 
                         </select>
 
@@ -371,11 +300,7 @@ export default function AdminPage() {
 
                         travelPackages.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
 
-
-
                     }
-
-
                 </select>{selectedTravelPackage && <div>< form onSubmit={handleSubmitEdit}>
 
 
@@ -574,12 +499,7 @@ export default function AdminPage() {
                     {
 
                         travelPackages.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
-
-
-
                     }
-
-
                 </select><div><h2>Users who booked the specific package</h2><ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>{users.map((user) => { return (<li>{user}</li>) })}</ul></div></div>)}
             </div></div ></div >;
 }

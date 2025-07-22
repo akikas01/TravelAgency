@@ -31,11 +31,9 @@ export default function AdminPage() {
             console.error("Error fetching countries:", error);
         }
     };
-
     useEffect(() => {
         selectCountries();
     }, []);
-
     const travelPackagesCall = async () => {
         if (!selectedOption) return;
         try {
@@ -43,33 +41,22 @@ export default function AdminPage() {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
-
             if (!res.ok) {
                 alert(await res.text());
                 setTravelPackages([]);
             }
-
             const data = await res.json();
-
-
             setTravelPackages(data);
-
         } catch (error) {
             console.error("Error fetching Travel Packages:", error);
         }
     };
-
-
-
     useEffect(() => {
         if (selectedOption) {
             travelPackagesCall();
         }
     }, [selectedOption]);
-
-
     const viewBookings = async () => {
-
         try {
             const res = await fetch(`https://localhost:7175/api/Booking/TravelPackages/${user.username}`, {
                 method: 'GET',
@@ -78,24 +65,17 @@ export default function AdminPage() {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }
             });
-
             if (!res.ok) {
                 alert(await res.text());
                 setBookings([]);
 
             }
-
             const data = await res.json();
             setBookings(data);
-
-
-
-
         } catch (error) {
             console.error("Error fetching Bookings:", error);
         }
     }
-
     useEffect(() => { if (section === "bookings") viewBookings(); return; }, [section]);
     useEffect(() => {
         if (section === "travelPackages") {
@@ -111,18 +91,12 @@ export default function AdminPage() {
                     'Content-Type': 'application/json',
                 }
             });
-
             const data = await res.json();
             setTravelPackagesView(data);
-
-
-
-
         } catch (error) {
             console.error("Error fetching Travel Packages View:", error);
         }
     }
-
     const getTravelPackage = async () => {
         try {
             const res = await fetch(`https://localhost:7175/api/TravelPackage/${selectedTravelPackage}`, {
@@ -132,23 +106,12 @@ export default function AdminPage() {
 
                 }
             });
-
-
-
             const data = await res.json();
             setCurrentTravelPackage(data);
-
-
-
-
         } catch (error) {
             console.error("Error fetching Current Travel Package:", error);
         }
-
-
-
     }
-
     useEffect(() => {
         if (selectedTravelPackage !== "") {
             getTravelPackage();
@@ -158,7 +121,6 @@ export default function AdminPage() {
     if (!user) {
         return <Navigate to="/" />;
     }
-    
     const book = async (currentbooking) => {
         try {
             const res = await fetch("https://localhost:7175/api/Booking", {
@@ -169,20 +131,11 @@ export default function AdminPage() {
                 },
                 body: JSON.stringify(currentbooking)
             });
-
-
             alert(await res.text());
-
-
-
-
-
-
         } catch (error) {
             console.error("Error fetching Booking:", error);
         }
     }
-
     return <div><h1 style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Welcome, User {user.username}</h1>
         <button onClick={handlelogout} style={{
             backgroundColor: '#1890FF',
@@ -201,7 +154,6 @@ export default function AdminPage() {
                 <button onClick={() => setSection("countries")} style={section === "countries" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>View Countries and associated Travel Packages</button>
                 <button onClick={() => setSection("bookings")} style={section === "bookings" ? { backgroundColor: 'lightblue', color: 'black', border: 'none' } : { border: 'none', backgroundColor: 'white' }}>Viewing Bookings</button>
             </div>
-
             <div style={{ marginTop: "40px" }}>
                 {section === "home" && <p>Please choose an option above.</p>}
                 {section === "travelPackages" && (<div><h2>Travel Packages</h2>
@@ -216,14 +168,8 @@ export default function AdminPage() {
                         }}
                     ><option value="">-- Select --</option>
                         {
-
                             travelPackagesView.map((travelPackage) => (<option value={travelPackage}>{travelPackage}</option>))
-
-
-
                         }
-
-
                     </select>{selectedTravelPackage !== "" && currentTravelPackage && <form><label style={{ fontWeight: 'bold' }}> Price in euros:</label><div>{currentTravelPackage.price}</div> <label style={{ fontWeight: 'bold' }}> Description:</label><div>{currentTravelPackage.description}<div><button onClick={() => book({ user: user.username, travelPackage: currentTravelPackage.title })} style={{
                         backgroundColor: 'blue',
                         color: 'white',
@@ -250,25 +196,15 @@ export default function AdminPage() {
                             {
 
                                 countries.map((country) => (<option value={country}>{country}</option>))
-
-
-
                             }
-
-
                         </select>
-
                         {
-
                             selectedOption && (<div>
 
                                 {travelPackages.map((tp) => { return (<p style={{ marginTop: "20px" }}><strong>{tp}</strong> </p>) })}</div>
-
-
                             )}
                     </div></div>)}
                 {section === "bookings" && (<div><h2>Bookings</h2><ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>{bookings.map((booking) => { return (<li>{booking}</li>) })}</ul></div>)}
             </div>
         </div></div>;
-
 }
