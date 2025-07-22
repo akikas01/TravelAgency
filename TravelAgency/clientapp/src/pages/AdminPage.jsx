@@ -236,7 +236,6 @@ export default function AdminPage() {
         }
     }, [selectedOption]);
     if (!user || user.role !== 'Admin') return <Navigate to="/" />;
-
     return <div><h1 style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>Welcome, Admin {user.username}</h1>
         <button onClick={handlelogout} style={{
             backgroundColor: '#1890FF', 
@@ -274,16 +273,10 @@ export default function AdminPage() {
                             {
                                 countries.map((country) => (<option value={country}>{country}</option>))
                             }
-
                         </select>
-
                         {
-
                             selectedOption && (<div>
-
                                 {travelPackages.map((tp) => { return (<p style={{ marginTop: "20px" }}><strong>{tp}</strong> </p>) })}</div>
-
-
                             )}
                     </div></div>)}
                 {section === "travelPackages" && (<div><select
