@@ -11,8 +11,7 @@ export default function Register() {
     const handleRegister = async () => {
         try {
             const user = await register(username, password);
-            if (user.role === 'Admin') navigate('/admin');
-            else navigate('/user');
+            navigate('/');
         } catch(ex) {
             alert(ex.message);
         }
